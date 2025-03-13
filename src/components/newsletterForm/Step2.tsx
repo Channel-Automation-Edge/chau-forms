@@ -1,7 +1,21 @@
 import React from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as yup from 'yup';
+import Select from 'react-select';
 import { InteractiveHoverButton } from '../ui/interactive-hover-button';
+import { Dialog, DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTrigger,
+  DialogClose,
+  DialogTitle
+} from '@/components/ui/dialog2';
+import { Player } from '@lottiefiles/react-lottie-player';
+interface OptionType {
+  value: string;
+  label: string;
+}
 
 interface Step2Props {
   onNext: () => void;
@@ -15,13 +29,28 @@ const validationSchema = yup.object().shape({
     .matches(/^[+]?[(]?[0-9]{1,4}[)]?[-\s./0-9]*$/, 'Invalid phone number')
     .required('Phone number is required'),
   company: yup.string().required('Company name is required'),
-  referralSource: yup.string().required('Please select an option'),
+  referralSource: yup.string().nullable(),
   referralOther: yup.string().when('referralSource', {
-    is: (val: string) => val === 'others',
+    is: (val: any) => val?.value === 'others',
     then: (schema) => schema.required('Please specify')
   }),
-  interest: yup.string().required('Please select an interest')
+  interest: yup.array()
+    .min(1, 'Please select at least one interest')
+    .required('Please select at least one interest')
 });
+
+const referralOptions: OptionType[] = [
+  { value: 'facebook', label: 'Facebook' },
+  { value: 'google', label: 'Google' },
+  { value: 'others', label: 'Others' }
+];
+
+const interestOptions: OptionType[] = [
+  { value: '1', label: 'New in marketing technology' },
+  { value: '2', label: 'AI in lead conversion' },
+  { value: '3', label: 'New Channel Automation Features' },
+  { value: '4', label: 'Custom/Dynamic Content in text' }
+];
 
 const Step2: React.FC<Step2Props> = ({ onNext }) => {
   const initialValues = {
@@ -30,27 +59,52 @@ const Step2: React.FC<Step2Props> = ({ onNext }) => {
     email: '',
     phone: '',
     company: '',
-    referralSource: '',
+    referralSource: null,
     referralOther: '',
-    interest: ''
+    interest: []
   };
 
-  const handleSubmit = async (values: typeof initialValues) => {
+  const handleSubmit = async (values: any) => {
     try {
-      // Send to webhook
+      const formattedValues = {
+        ...values,
+        referralSource: values.referralSource?.value,
+        interest: values.interest.map((i: any) => i.value)
+      };
+
       await fetch('https://your-webhook-url.com', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(values),
+        body: JSON.stringify(formattedValues),
       });
       
-      onNext();
     } catch (error) {
       console.error('Submission error:', error);
     }
   };
+
+  const style = {
+    control: (base: any) => ({
+      ...base,
+      padding: '0.30rem',
+      borderRadius: '0.5rem',
+      borderColor: '#e5e7eb',
+      boxShadow: 'none',
+      '&:hover': {
+          border: '1px solid #6e11b0',
+      },
+    }),
+    option: (base: any, { isFocused }: { isFocused: boolean }) => {
+      return {
+        ...base,
+        backgroundColor: isFocused ? "#FFEDD3" : "white",
+        color: "black",
+      };
+    }
+  };
+  
 
   return (
     <div className='w-full'>
@@ -59,7 +113,7 @@ const Step2: React.FC<Step2Props> = ({ onNext }) => {
         validationSchema={validationSchema}
         onSubmit={handleSubmit}
       >
-        {({ values, isSubmitting }) => (
+        {({ values, setFieldValue, isSubmitting }: { values: { referralSource: OptionType | null; [key: string]: any }, setFieldValue: any, isSubmitting: boolean }) => (
           <Form>
             <div className='flex items-center justify-center md:justify-start'>
               <div className='space-y-6 px-4 md:pl-0 text-center md:text-left w-full max-w-2xl'>
@@ -105,11 +159,17 @@ const Step2: React.FC<Step2Props> = ({ onNext }) => {
                       <ErrorMessage name="email" component="div" className="text-red-500 text-sm" />
                     </div>
                     <div>
-                      <Field
-                        name="phone"
-                        placeholder="Phone Number"
-                        className="input-field"
-                      />
+                      <div className='flex items-start'>
+                        <input className="py-3 px-4 block text-center w-14 bg-gray-100 border border-gray-200 border-r-transparent rounded-l-lg text-base focus:border-gray-200 focus:border-r-transparent focus:ring-transparent cursor-default focus:outline-none" readOnly placeholder='+1'>
+                        </input>
+                        <Field
+                          name="phone"
+                          placeholder="Phone Number"
+                          maxLength={10}
+                          className="w-full p-3 border rounded-r-lg bg-white focus:outline-none hover:border-purple-800"
+                        />
+                      </div>
+                      
                       <ErrorMessage name="phone" component="div" className="text-red-500 text-sm" />
                     </div>
                   </div>
@@ -124,21 +184,23 @@ const Step2: React.FC<Step2Props> = ({ onNext }) => {
                     <ErrorMessage name="company" component="div" className="text-red-500 text-sm" />
                   </div>
 
-                  {/* Referral Source */}
-                  <div>
-                    <Field
-                      as="select"
+                {/* Referral Source Dropdown */}
+                <div>
+                  <Select
                       name="referralSource"
-                      className="input-field"
-                    >
-                      <option value="" className='text-gray-600'>How did you hear about us?</option>
-                      <option value="facebook">Facebook</option>
-                      <option value="google">Google</option>
-                      <option value="others">Others</option>
-                    </Field>
+                      options={referralOptions}
+                      isClearable
+                      isSearchable
+                      placeholder="How did you hear about us?"
+                      className="basic-single"
+                      classNamePrefix="select"
+                      onChange={(selected) => setFieldValue('referralSource', selected)}
+                      value={values.referralSource}
+                      styles={style}
+                    />
                     <ErrorMessage name="referralSource" component="div" className="text-red-500 text-sm" />
                     
-                    {values.referralSource === 'others' && (
+                    {values.referralSource?.value === 'others' && (
                       <div className="mt-2">
                         <Field
                           name="referralOther"
@@ -150,22 +212,21 @@ const Step2: React.FC<Step2Props> = ({ onNext }) => {
                     )}
                   </div>
 
-                  {/* Interests Radio Group */}
+                  {/* Interests Multi-Select */}
                   <div className='space-y-2'>
                     <label className='block text-left font-medium'>I'm interested in:</label>
-                    <div className='ml-2 grid grid-cols-1 md:grid-cols-2 gap-2'>
-                      {[1, 2, 3, 4].map((num) => (
-                        <label key={num} className='flex items-center space-x-2'>
-                          <Field
-                            type="radio"
-                            name="interest"
-                            value={`option${num}`}
-                            className="form-radio"
-                          />
-                          <span>Option {num}</span>
-                        </label>
-                      ))}
-                    </div>
+                    <Select
+                      name="interest"
+                      options={interestOptions as any}
+                      isMulti
+                      closeMenuOnSelect={false}
+                      placeholder="Select interests..."
+                      className="basic-multi-select"
+                      classNamePrefix="select"
+                      onChange={(selected) => setFieldValue('interest', selected)}
+                      value={values.interest}
+                      styles={style}
+                    />
                     <ErrorMessage name="interest" component="div" className="text-red-500 text-sm" />
                   </div>
                 </div>
@@ -184,6 +245,32 @@ const Step2: React.FC<Step2Props> = ({ onNext }) => {
           </Form>
         )}
       </Formik>
+      <Dialog>
+        <DialogTrigger asChild>
+          <button id='dialog' className='hidden'></button>
+        </DialogTrigger>
+        <DialogTitle></DialogTitle>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader className='items-center'>
+            <Player
+              src="/check.json"
+              className='h-32 sm:h-40'
+              autoplay
+              loop
+              speed={1}
+            />
+            <h4 className='text-lg sm:text-xl font-semibold text-center py-1'>Awesome!</h4>
+            <DialogDescription>
+						You're now subscribed to our newsletter. You'll receive the latest marketing tips and strategies delivered direct to you.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <DialogClose asChild className='items-center'>
+              <button className='bg-accentColor hover:bg-accentDark w-full' onClick={onNext}>OK</button>
+            </DialogClose>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

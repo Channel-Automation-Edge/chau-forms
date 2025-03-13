@@ -128,5 +128,25 @@
 }
 
 .input-field {
-  @apply w-full p-3 border rounded-lg bg-white
+  @apply w-full p-3 border rounded-lg  bg-white focus:outline-none hover:border-purple-800 text-base text-gray-800
+}
+
+/* Custom react-select styles */
+.select__control {
+  min-height: 48px !important;
+  background-color: white;
+}
+
+.select__menu {
+  border-radius: 0.5rem !important;
+  overflow: hidden !important;
+}
+
+.select__multi-value {
+  background-color: #FFEDD3 !important;
+  border-radius: 0.25rem !important;
+}
+
+.select__multi-value__label {
+  color: #4E3105 !important;
 }
