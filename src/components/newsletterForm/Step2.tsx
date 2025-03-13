@@ -42,6 +42,10 @@ const validationSchema = yup.object().shape({
 const referralOptions: OptionType[] = [
   { value: 'facebook', label: 'Facebook' },
   { value: 'google', label: 'Google' },
+  { value: 'referral', label: 'Referral' },
+  { value: 'youTube', label: 'YouTube' },
+  { value: 'webinar', label: 'Webinar' },
+  { value: 'linkedIn', label: 'LinkedIn' },
   { value: 'others', label: 'Others' }
 ];
 
