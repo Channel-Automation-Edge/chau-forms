@@ -106,7 +106,15 @@ const Step2: React.FC<Step2Props> = ({ onNext }) => {
         backgroundColor: isFocused ? "#FFEDD3" : "white",
         color: "black",
       };
-    }
+    },
+    menu: (base: any) => ({
+      ...base,
+      zIndex: 9999, // Add a high z-index to the dropdown menu
+    }),
+    menuPortal: (base: any) => ({
+      ...base,
+      zIndex: 9999, // Ensure the menu portal also has a high z-index
+    })
   };
   
 
