@@ -1,5 +1,4 @@
 import Step1 from '@/components/newsletterForm/Step1';
-import React from 'react'
 import { useState } from 'react';
 import { Player } from '@lottiefiles/react-lottie-player';
 import Step2 from '@/components/newsletterForm/Step2';
