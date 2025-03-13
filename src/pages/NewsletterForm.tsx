@@ -7,7 +7,12 @@ const NewsletterForm = () => {
   const [currentStep, setCurrentStep] = useState<number>(1);
 
   const handleNext = () => {
-    setCurrentStep(currentStep + 1);
+    if (currentStep === 1) {
+      setCurrentStep(2);
+    }
+    else {
+      setCurrentStep(1);
+    }
   }
 
   return (

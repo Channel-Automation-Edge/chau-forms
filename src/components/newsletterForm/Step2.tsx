@@ -29,9 +29,9 @@ const validationSchema = yup.object().shape({
     .matches(/^[+]?[(]?[0-9]{1,4}[)]?[-\s./0-9]*$/, 'Invalid phone number')
     .required('Phone number is required'),
   company: yup.string().required('Company name is required'),
-  referralSource: yup.string().nullable(),
+  referralSource: yup.object().nullable(), // Updated to object type
   referralOther: yup.string().when('referralSource', {
-    is: (val: any) => val?.value === 'others',
+    is: (val: OptionType | null) => val?.value === 'others',
     then: (schema) => schema.required('Please specify')
   }),
   interest: yup.array()
@@ -59,18 +59,20 @@ const Step2: React.FC<Step2Props> = ({ onNext }) => {
     email: '',
     phone: '',
     company: '',
-    referralSource: null,
+    referralSource: null as OptionType | null, // Properly typed
     referralOther: '',
-    interest: []
+    interest: [] as OptionType[]
   };
 
   const handleSubmit = async (values: any) => {
     try {
       const formattedValues = {
         ...values,
-        referralSource: values.referralSource?.value,
+        referralSource: values.referralSource?.value, 
         interest: values.interest.map((i: any) => i.value)
       };
+
+      console.log('values:', formattedValues);
 
       await fetch('https://your-webhook-url.com', {
         method: 'POST',
@@ -79,10 +81,12 @@ const Step2: React.FC<Step2Props> = ({ onNext }) => {
         },
         body: JSON.stringify(formattedValues),
       });
-      
+
     } catch (error) {
       console.error('Submission error:', error);
     }
+    // Trigger the success dialog
+    document.getElementById('dialog')?.click();
   };
 
   const style = {
@@ -160,8 +164,11 @@ const Step2: React.FC<Step2Props> = ({ onNext }) => {
                     </div>
                     <div>
                       <div className='flex items-start'>
-                        <input className="py-3 px-4 block text-center w-14 bg-gray-100 border border-gray-200 border-r-transparent rounded-l-lg text-base focus:border-gray-200 focus:border-r-transparent focus:ring-transparent cursor-default focus:outline-none" readOnly placeholder='+1'>
-                        </input>
+                        <input
+                          className="py-3 px-4 block text-center w-14 bg-gray-100 border border-gray-200 border-r-transparent rounded-l-lg text-base focus:border-gray-200 focus:border-r-transparent focus:ring-transparent cursor-default focus:outline-none"
+                          readOnly
+                          placeholder='+1'
+                        />
                         <Field
                           name="phone"
                           placeholder="Phone Number"
@@ -184,9 +191,9 @@ const Step2: React.FC<Step2Props> = ({ onNext }) => {
                     <ErrorMessage name="company" component="div" className="text-red-500 text-sm" />
                   </div>
 
-                {/* Referral Source Dropdown */}
-                <div>
-                  <Select
+                  {/* Referral Source Dropdown */}
+                  <div>
+                    <Select
                       name="referralSource"
                       options={referralOptions}
                       isClearable
@@ -199,7 +206,7 @@ const Step2: React.FC<Step2Props> = ({ onNext }) => {
                       styles={style}
                     />
                     <ErrorMessage name="referralSource" component="div" className="text-red-500 text-sm" />
-                    
+
                     {values.referralSource?.value === 'others' && (
                       <div className="mt-2">
                         <Field
@@ -217,7 +224,7 @@ const Step2: React.FC<Step2Props> = ({ onNext }) => {
                     <label className='block text-left font-medium'>I'm interested in:</label>
                     <Select
                       name="interest"
-                      options={interestOptions as any}
+                      options={interestOptions}
                       isMulti
                       closeMenuOnSelect={false}
                       placeholder="Select interests..."
@@ -245,6 +252,8 @@ const Step2: React.FC<Step2Props> = ({ onNext }) => {
           </Form>
         )}
       </Formik>
+
+      {/* Success Dialog */}
       <Dialog>
         <DialogTrigger asChild>
           <button id='dialog' className='hidden'></button>
@@ -260,13 +269,13 @@ const Step2: React.FC<Step2Props> = ({ onNext }) => {
               speed={1}
             />
             <h4 className='text-lg sm:text-xl font-semibold text-center py-1'>Awesome!</h4>
-            <DialogDescription>
-						You're now subscribed to our newsletter. You'll receive the latest marketing tips and strategies delivered direct to you.
+            <DialogDescription className='text-center'>
+              You're now subscribed to our newsletter. You'll receive the latest marketing tips and strategies delivered direct to you.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <DialogClose asChild className='items-center'>
-              <button className='bg-accentColor hover:bg-accentDark w-full' onClick={onNext}>OK</button>
+              <button className='bg-purple-800 hover:bg-purple-900 text-white p-3 rounded-lg hover:bg-accentDark w-full' onClick={onNext}>OK</button>
             </DialogClose>
           </DialogFooter>
         </DialogContent>
