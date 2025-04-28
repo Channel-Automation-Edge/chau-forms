@@ -238,7 +238,7 @@ const JacuzziDemo = () => {
               <div className="sm:col-span-9 flex flex-wrap gap-2">
                 <button
                   type="button"
-                  onClick={() => formik.setFieldValue('serviceId', 'bath')}
+                  onClick={() => formik.setFieldValue('service', 'bath')}
                   className={`px-4 py-2 text-sm font-medium rounded-lg border transition-colors
                     ${
                       formik.values.service === 'bath'
@@ -251,7 +251,7 @@ const JacuzziDemo = () => {
                 
                 <button
                   type="button"
-                  onClick={() => formik.setFieldValue('serviceId', 'shower')}
+                  onClick={() => formik.setFieldValue('service', 'shower')}
                   className={`px-4 py-2 text-sm font-medium rounded-lg border transition-colors
                     ${
                       formik.values.service === 'shower'
