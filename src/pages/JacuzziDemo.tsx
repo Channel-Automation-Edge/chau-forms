@@ -232,6 +232,9 @@ const JacuzziDemo = () => {
                 ) : null}
               </div>
 
+              <div className="sm:col-span-3">
+                <label htmlFor="service" className="form-label">Interest</label>
+              </div>
               <div className="sm:col-span-9 flex flex-wrap gap-2">
                 <button
                   type="button"
