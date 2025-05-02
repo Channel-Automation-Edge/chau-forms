@@ -3,6 +3,7 @@ import NewsletterForm from './pages/NewsletterForm';
 import WebinarForm from './pages/WebinarForm';
 import KohlerDemo from './pages/KohlerDemo';
 import JacuzziDemo from './pages/JacuzziDemo';
+import CremationDemo from './pages/CremationDemo';
 
 function App() {
 
@@ -13,6 +14,7 @@ function App() {
         <Route path='/webinar' element={<WebinarForm />} />
         <Route path="/kohler-demo" element={<KohlerDemo />} />
         <Route path="/jacuzzi-demo" element={<JacuzziDemo />} />
+        <Route path="/cremation-demo" element={<CremationDemo />} />
       </Routes>
     </>
   )
