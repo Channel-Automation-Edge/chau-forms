@@ -5,6 +5,7 @@ import KohlerDemo from './pages/KohlerDemo';
 import JacuzziDemo from './pages/JacuzziDemo';
 import CremationDemo from './pages/CremationDemo';
 import CallCenterDispo from './pages/CallCenterDispo';
+import RehashDemo from './pages/RehashDemo';
 
 function App() {
 
@@ -17,6 +18,7 @@ function App() {
         <Route path="/jacuzzi-demo" element={<JacuzziDemo />} />
         <Route path="/cremation-demo" element={<CremationDemo />} />
         <Route path="/callcenterdispo-demo" element={<CallCenterDispo />} />
+        <Route path="/rehash-demo" element={<RehashDemo />} />
       </Routes>
     </>
   )
