@@ -1,19 +1,28 @@
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
+import { Dialog, DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTrigger,
+  DialogClose,
+  DialogTitle
+} from '@/components/dialog';
+import ConfirmCheck from '@/components/icons/ConfirmCheck';
 
-const JacuzziDemo = () => {
+const CallCenterDispo = () => {
 
-	// Set document title and favicon
-	document.title = 'Demo Form';
-	const favicon = document.querySelector("link[rel~='icon']") as HTMLLinkElement | null;
-	if (favicon) {
-		favicon.href = 'https://channelautomation.com/wp-content/uploads/2022/09/cropped-logo-final-192x192.png';
-	} else {
-		const newFavicon = document.createElement('link');
-		newFavicon.rel = 'icon';
-		newFavicon.href = 'https://channelautomation.com/wp-content/uploads/2022/09/cropped-logo-final-192x192.png';
-		document.head.appendChild(newFavicon);
-	}
+    // Set document title and favicon
+    document.title = 'Demo Form';
+    const favicon = document.querySelector("link[rel~='icon']") as HTMLLinkElement | null;
+    if (favicon) {
+        favicon.href = 'https://channelautomation.com/wp-content/uploads/2022/09/cropped-logo-final-192x192.png';
+    } else {
+        const newFavicon = document.createElement('link');
+        newFavicon.rel = 'icon';
+        newFavicon.href = 'https://channelautomation.com/wp-content/uploads/2022/09/cropped-logo-final-192x192.png';
+        document.head.appendChild(newFavicon);
+    }
 
   const initialValues = {
     firstname: '',
@@ -24,7 +33,6 @@ const JacuzziDemo = () => {
     email: '',
     phone: '',
     state: '',
-    service: '',
   };
 
   const validationSchema = Yup.object({
@@ -36,54 +44,50 @@ const JacuzziDemo = () => {
     email: Yup.string().email('Invalid email format').required('Email is required'),
     phone: Yup.string().required('Phone number is required'),
     state: Yup.string().required('State is required'),
-    service: Yup.string().required('Service type is required'),
   });
 
-	const handleSubmit = async (values: typeof initialValues) => {
-		try {
-			// Structure payload to match webhook expectations
-			const payload = {
-				fields: {
-					fullName: { 
-						value: `${values.firstname} ${values.lastname}` 
-					},
+  const handleSubmit = async (values: typeof initialValues) => {
+    try {
+      // Structure payload to match webhook expectations
+      const payload = {
+        fields: {
+          fullName: {
+            value: `${values.firstname} ${values.lastname}`,
+          },
           firstname: {
-            value: values.firstname
+            value: values.firstname,
           },
           lastname: {
-            value: values.lastname
+            value: values.lastname,
           },
-					phone: { 
-						value: values.phone 
-					},
-					zip: { value: values.zip },
-					address1: { value: values.address1 },
-					city: { value: values.city },
-					email: { value: values.email },
-					state: { value: values.state },
-          service: { value: values.service },
-				}
-			};
-	
-			const response = await fetch(
-				'https://app.channelautomation.com/api/iwh/45c282c40194948b8bdecd55714bd1e1',
-				{
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json',
-					},
-					body: JSON.stringify(payload),
-				}
-			);
-	
-			if (!response.ok) throw new Error('Network response was not ok');
-			
-			const data = await response.json();
-			console.log('Webhook response:', data);
-		} catch (error) {
-			console.error('Submission error:', error);
-		}
-	};
+          phone: {
+            value: values.phone,
+          },
+          zip: { value: values.zip },
+          address1: { value: values.address1 },
+          city: { value: values.city },
+          email: { value: values.email },
+          state: { value: values.state },
+        },
+      };
+
+      const response = await fetch("https://app.channelautomation.com/api/iwh/2203e19218ed0b0a376d3f001e5eb328", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) throw new Error("Network response was not ok");
+
+      const data = await response.json();
+      console.log("Webhook response:", data);
+    } catch (error) {
+      console.error("Submission error:", error);
+    }
+    document.getElementById("dialog")?.click()
+  };
 
   const formik = useFormik({
     initialValues,
@@ -97,7 +101,7 @@ const JacuzziDemo = () => {
         <div className="max-w-4xl px-4 py-10 sm:px-6 lg:px-8 mx-auto">
           <div className="bg-white rounded-xl shadow p-4 sm:p-7">
             <div className="mb-8">
-              <h2 className="text-xl font-bold text-gray-800">Jacuzzi Demo Form</h2>
+              <h2 className="text-xl font-bold text-gray-800">Call Center Dispo Form</h2>
               <p className="text-sm text-gray-600">
                 Please fill in the details to proceed with the demo
               </p>
@@ -232,44 +236,6 @@ const JacuzziDemo = () => {
                 ) : null}
               </div>
 
-              <div className="sm:col-span-3">
-                <label htmlFor="service" className="form-label">Interest</label>
-              </div>
-              <div className="sm:col-span-9 flex flex-wrap gap-2">
-                <button
-                  type="button"
-                  onClick={() => formik.setFieldValue('service', 'bath')}
-                  className={`px-4 py-2 text-sm font-medium rounded-lg border transition-colors
-                    ${
-                      formik.values.service === 'bath'
-                        ? 'bg-blue-600 text-white border-blue-600'
-                        : 'bg-white text-gray-800 border-gray-200 hover:bg-gray-200'
-                    }`}
-                >
-                  Bath
-                </button>
-                
-                <button
-                  type="button"
-                  onClick={() => formik.setFieldValue('service', 'shower')}
-                  className={`px-4 py-2 text-sm font-medium rounded-lg border transition-colors
-                    ${
-                      formik.values.service === 'shower'
-                        ? 'bg-blue-600 text-white border-blue-600'
-                        : 'bg-white text-gray-800 border-gray-200 hover:bg-gray-200'
-                    }`}
-                >
-                  Shower
-                </button>
-
-                {formik.touched.service && formik.errors.service && (
-                  <div className="text-red-500 text-sm w-full mt-1">
-                    {formik.errors.service}
-                  </div>
-                )}
-              </div>
-
-
             </div>
 
             <div className="border-t border-gray-200 my-6"></div>
@@ -286,8 +252,28 @@ const JacuzziDemo = () => {
           </div>
         </div>
       </form>
+      <Dialog>
+        <DialogTrigger asChild>
+          <button id='dialog' className='hidden'></button>
+        </DialogTrigger>
+        <DialogTitle></DialogTitle>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader className='items-center'>
+						<ConfirmCheck />
+            <h4 className='text-lg sm:text-xl font-semibold text-center py-1'>Awesome!</h4>
+            <DialogDescription>
+						Form submitted successfully. The demo will start shortly.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <DialogClose asChild className='items-center hidden'>
+              <button className='bg-accentColor hover:bg-accentDark w-full' >OK</button>
+            </DialogClose>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
 
-export default JacuzziDemo;
+export default CallCenterDispo;
