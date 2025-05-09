@@ -60,14 +60,22 @@ const RehashDemo = () => {
 
   const handleSubmit = async (values: typeof initialValues) => {
     try {
+      // Sanitize currency values
+      const sanitizeCurrency = (value: string) => {
+        // Remove all non-numeric characters except decimal point
+        const sanitized = value.replace(/[^0-9.]/g, '');
+        // Convert to number and fix decimal places
+        return parseFloat(sanitized) || 0;
+      };
+      
       // Structure payload to match webhook expectations
       const payload = {
         fields: {
           firstname: { value: values.firstname },
           lastname: { value: values.lastname },
           phone: { value: '+1'+values.phone },
-          quote: { value: values.quote },
-          home_value: { value: values.home_value },
+          quote: { value: sanitizeCurrency(values.quote) },
+          home_value: { value: sanitizeCurrency(values.home_value) },
           service_id: { value: 1 },
           zip: { value: values.zip },
           address1: { value: values.address1 },
@@ -250,6 +258,7 @@ const RehashDemo = () => {
                   type="text"
                   className="form-input"
                   placeholder="123-456-7890"
+                  maxLength={10}
                   {...formik.getFieldProps("phone")}
                 />
                 {formik.touched.phone && formik.errors.phone ? (
@@ -280,7 +289,7 @@ const RehashDemo = () => {
               </div>
               <div className="sm:col-span-3">
                 <label htmlFor="quote" className="form-label">
-                  Quote
+                  Quote (Sample Quote Offered)
                 </label>
               </div>
               <div className="sm:col-span-9">
