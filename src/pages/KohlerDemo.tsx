@@ -1,5 +1,14 @@
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
+import { Dialog, DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTrigger,
+  DialogClose,
+  DialogTitle
+} from '@/components/dialog';
+import ConfirmCheck from '@/components/icons/ConfirmCheck';
 
 const KohlerDemo = () => {
 
@@ -24,6 +33,7 @@ const KohlerDemo = () => {
     email: '',
     phone: '',
     state: '',
+    service: '',
   };
 
   const validationSchema = Yup.object({
@@ -35,6 +45,7 @@ const KohlerDemo = () => {
     email: Yup.string().email('Invalid email format').required('Email is required'),
     phone: Yup.string().required('Phone number is required'),
     state: Yup.string().required('State is required'),
+    service: Yup.string().required('Service is required'),
   });
 
 	const handleSubmit = async (values: typeof initialValues) => {
@@ -59,6 +70,7 @@ const KohlerDemo = () => {
 					city: { value: values.city },
 					email: { value: values.email },
 					state: { value: values.state },
+          service: { value: values.service },
 				}
 			};
 	
@@ -80,6 +92,7 @@ const KohlerDemo = () => {
 		} catch (error) {
 			console.error('Submission error:', error);
 		}
+    document.getElementById("dialog")?.click()
 	};
 
   const formik = useFormik({
@@ -92,6 +105,13 @@ const KohlerDemo = () => {
     <div className="w-full bg-gray-50">
       <form onSubmit={formik.handleSubmit}>
         <div className="max-w-4xl px-4 py-10 sm:px-6 lg:px-8 mx-auto">
+          <div className="flex justify-start  mb-8">
+            <img
+              src="https://project-starfish.s3.us-east-005.backblazeb2.com/logo/Kohler_logo.svg.png"
+              alt="Kohler Logo"
+              className="h-16 w-auto"
+            />
+          </div>
           <div className="bg-white rounded-xl shadow p-4 sm:p-7">
             <div className="mb-8">
               <h2 className="text-xl font-bold text-gray-800">Kohler Demo Form</h2>
@@ -229,6 +249,44 @@ const KohlerDemo = () => {
                 ) : null}
               </div>
 
+              <div className="sm:col-span-3">
+                <label htmlFor="service" className="form-label">Interest</label>
+              </div>
+              <div className="sm:col-span-9 flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  onClick={() => formik.setFieldValue('service', 'bath')}
+                  className={`px-4 py-2 text-sm font-medium rounded-lg border transition-colors
+                    ${
+                      formik.values.service === 'bath'
+                        ? 'bg-blue-600 text-white border-blue-600'
+                        : 'bg-white text-gray-800 border-gray-200 hover:bg-gray-200'
+                    }`}
+                >
+                  Bath
+                </button>
+                
+                <button
+                  type="button"
+                  onClick={() => formik.setFieldValue('service', 'shower')}
+                  className={`px-4 py-2 text-sm font-medium rounded-lg border transition-colors
+                    ${
+                      formik.values.service === 'shower'
+                        ? 'bg-blue-600 text-white border-blue-600'
+                        : 'bg-white text-gray-800 border-gray-200 hover:bg-gray-200'
+                    }`}
+                >
+                  Shower
+                </button>
+
+                {formik.touched.service && formik.errors.service && (
+                  <div className="text-red-500 text-sm w-full mt-1">
+                    {formik.errors.service}
+                  </div>
+                )}
+              </div>
+
+
             </div>
 
             <div className="border-t border-gray-200 my-6"></div>
@@ -245,6 +303,26 @@ const KohlerDemo = () => {
           </div>
         </div>
       </form>
+      <Dialog>
+        <DialogTrigger asChild>
+          <button id='dialog' className='hidden'></button>
+        </DialogTrigger>
+        <DialogTitle></DialogTitle>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader className='items-center'>
+						<ConfirmCheck />
+            <h4 className='text-lg sm:text-xl font-semibold text-center py-1'>Awesome!</h4>
+            <DialogDescription>
+						Form submitted successfully. The demo will start shortly.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <DialogClose asChild className='items-center hidden'>
+              <button className='bg-accentColor hover:bg-accentDark w-full' >OK</button>
+            </DialogClose>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
