@@ -6,6 +6,7 @@ import JacuzziDemo from './pages/JacuzziDemo';
 import CremationDemo from './pages/CremationDemo';
 import CallCenterDispo from './pages/CallCenterDispo';
 import RehashDemo from './pages/RehashDemo';
+import PJFitzLiveChat from './pages/PJFitzLiveChat';
 
 function App() {
 
@@ -19,6 +20,7 @@ function App() {
         <Route path="/cremation-demo" element={<CremationDemo />} />
         <Route path="/callcenterdispo-demo" element={<CallCenterDispo />} />
         <Route path="/rehash-demo" element={<RehashDemo />} />
+        <Route path="/pj-fitz" element={<PJFitzLiveChat />} />
       </Routes>
     </>
   )
